@@ -1,0 +1,26 @@
+Senior Machine Learning Engineer
+Department: AI Platform
+Location: Bengaluru · Remote
+Employment Type: Full-time
+
+About the Role
+Build reliable NLP products that help teams understand customer conversations. Work with an experienced applied AI group and ship useful features to production.
+
+Responsibilities
+- Design and deploy machine learning pipelines with Python and PyTorch.
+- Collaborate with data engineering and product teams.
+
+Required Qualifications
+- Must have 3+ years of experience building NLP applications.
+- Strong Python, SQL, and Postgres skills.
+- AWS certification required.
+- Bachelor's degree in Computer Science or Data Science.
+
+Preferred Qualifications
+- Kubernetes and ReactJS experience is nice to have.
+- Excellent communication skills are a plus.
+
+Benefits
+- Health insurance
+- Paid leave
+- Learning budget

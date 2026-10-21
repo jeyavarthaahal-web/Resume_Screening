@@ -1,0 +1,1 @@
+-- TalentIQ seed data will be added after the database schema is defined.

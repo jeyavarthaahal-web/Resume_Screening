@@ -1,0 +1,33 @@
+Alex Kumar
+alex.kumar@example.com | +91 90000 00000 | Chennai, India
+
+PROFESSIONAL SUMMARY
+AI and Data Science student with Python and SQL experience.
+
+EDUCATION & QUALIFICATIONS
+B.Tech in Artificial Intelligence and Data Science
+Example University, Chennai
+2024 - 2028
+
+EXPERIENCE
+Software Engineer at Example Tech
+Chennai, India
+Jun 2024 - Jun 2025
+Built internal tools using Python, PostgreSQL, and React.
+
+SKILLS
+Python, C++, SQL, PostgreSQL, Pandas, NumPy, Machine Learning, Node.js, AWS, communication
+
+PROJECTS
+Resume Screening System
+Built a resume analysis prototype using Python and React.
+
+CERTIFICATIONS
+Python for Data Science - Example Institute - 2025
+
+ACHIEVEMENTS
+Won first place in the Example Hackathon.
+
+LANGUAGES
+English - Fluent
+Tamil - Native

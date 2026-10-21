@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+.env.local
+.env.*.local
+.env.*
+!.env.example
+.pytest_cache/
+.mypy_cache/
