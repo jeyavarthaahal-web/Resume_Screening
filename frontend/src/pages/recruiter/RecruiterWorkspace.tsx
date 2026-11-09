@@ -1,10 +1,52 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { BarChart3, BriefcaseBusiness, ChevronRight, FileSearch, LayoutDashboard, LogOut, Menu, Plus, Settings2, Users, X, BookmarkCheck, GitCompareArrows, ArrowRight, LoaderCircle, Search, SlidersHorizontal, Eye, Pencil, Trash2, CalendarDays, Sparkles, MessageSquare, Check, ArrowLeft } from 'lucide-react'
+import {
+  BarChart3,
+  BriefcaseBusiness,
+  ChevronRight,
+  FileSearch,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Plus,
+  Settings2,
+  Users,
+  X,
+  BookmarkCheck,
+  GitCompareArrows,
+  ArrowRight,
+  LoaderCircle,
+  Search,
+  SlidersHorizontal,
+  Eye,
+  Pencil,
+  Trash2,
+  CalendarDays,
+  Sparkles,
+  MessageSquare,
+  Check,
+  ArrowLeft,
+  Building2,
+  Award,
+  AlertCircle,
+  CheckCircle2,
+} from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 import { useProfile } from '../../hooks/useProfile'
 import { deleteJob, getJob } from '../../services/jobService'
-import { compareCandidates, deleteNote, editNote, getCandidate, getCandidates, getRecruiterDashboard, getRecruiterJobs, getResumeDownload, getShortlist, saveNote, updateShortlist } from '../../services/recruiterService'
+import {
+  compareCandidates,
+  deleteNote,
+  editNote,
+  getCandidate,
+  getCandidates,
+  getRecruiterDashboard,
+  getRecruiterJobs,
+  getResumeDownload,
+  getShortlist,
+  saveNote,
+  updateShortlist,
+} from '../../services/recruiterService'
 import { getRankingExplanation } from '../../services/rankingService'
 import type { JobRecord } from '../../types/job'
 import type { CandidatePage, RecruiterMetrics, WorkspaceCandidate } from '../../types/recruiter'
@@ -12,9 +54,13 @@ import type { RankingExplanation } from '../../types/ranking'
 import './RecruiterWorkspace.css'
 
 const navItems = [
-  ['/recruiter', LayoutDashboard, 'Dashboard'], ['/recruiter/jobs', BriefcaseBusiness, 'Jobs'],
-  ['/recruiter/jobs', Users, 'Candidates'], ['/recruiter/shortlist', BookmarkCheck, 'Shortlist'],
-  ['/recruiter/compare', GitCompareArrows, 'Compare'], ['/recruiter/analytics', BarChart3, 'Analytics'], ['/recruiter/settings', Settings2, 'Settings'],
+  ['/recruiter', LayoutDashboard, 'Dashboard'],
+  ['/recruiter/jobs', BriefcaseBusiness, 'Jobs'],
+  ['/recruiter/jobs', Users, 'Candidates'],
+  ['/recruiter/shortlist', BookmarkCheck, 'Shortlist'],
+  ['/recruiter/compare', GitCompareArrows, 'Compare'],
+  ['/recruiter/analytics', BarChart3, 'Analytics'],
+  ['/recruiter/settings', Settings2, 'Settings'],
 ] as const
 
 export function RecruiterLayout() {
@@ -25,76 +71,1536 @@ export function RecruiterLayout() {
   const navigate = useNavigate()
   const fullName = profile?.full_name || user?.user_metadata?.full_name || 'Recruiter'
   const initials = String(fullName).split(/\s+/).map(x => x[0]).join('').slice(0, 2).toUpperCase()
-  const section = location.pathname.includes('/candidates/') ? 'Candidate details' : location.pathname.includes('/candidates') ? 'Candidates' : location.pathname.includes('/jobs/new') ? 'New job' : location.pathname.includes('/jobs/') ? 'Job details' : location.pathname.split('/')[2] || 'Dashboard'
-  return <div className="rw-shell"><aside className={`rw-sidebar ${open ? 'is-open' : ''}`}><div className="rw-brand-row"><Link to="/recruiter" className="rw-brand"><span className="rw-mark">T</span>Talent<span>IQ</span></Link><button className="rw-icon mobile-only" onClick={() => setOpen(false)} aria-label="Close menu"><X size={18}/></button></div><div className="rw-workspace-label">WORKSPACE</div><nav className="rw-nav">{navItems.map(([to, Icon, label], i) => <NavLink key={label} to={to} end={i === 0} onClick={() => setOpen(false)} className={({isActive}) => `rw-nav-link ${(isActive || (label==='Candidates' && location.pathname.includes('/candidates'))) ? 'active' : ''}`}><Icon size={17}/>{label}</NavLink>)}</nav><div className="rw-sidebar-foot"><span className="rw-company-chip">{profile?.company_name || 'Recruiter workspace'}</span><Link to="/recruiter/settings"><Settings2 size={16}/> Settings</Link><button onClick={() => void signOut().then(result => { if (!result.error) navigate('/login') })}><LogOut size={16}/> Sign out</button><div className="rw-user"><span>{initials}</span><div><strong>{fullName}</strong><small>{profile?.company_name || 'Recruiter'}</small></div></div></div></aside>{open && <button className="rw-scrim" onClick={() => setOpen(false)} aria-label="Close navigation"/>}<main className="rw-main"><header className="rw-topbar"><button className="rw-icon mobile-only" onClick={() => setOpen(true)} aria-label="Open menu"><Menu size={18}/></button><div className="rw-breadcrumb">Workspace <ChevronRight size={14}/><strong>{section.replaceAll('-', ' ')}</strong></div><span className="rw-company-top">{profile?.company_name || 'TalentIQ Recruiter'}</span></header><Outlet/></main></div>
+  const section = location.pathname.includes('/candidates/')
+    ? 'Candidate details'
+    : location.pathname.includes('/candidates')
+    ? 'Candidates'
+    : location.pathname.includes('/jobs/new')
+    ? 'New job'
+    : location.pathname.includes('/jobs/')
+    ? 'Job details'
+    : location.pathname.split('/')[2] || 'Dashboard'
+
+  return (
+    <div className="rw-shell">
+      <aside className={`rw-sidebar ${open ? 'is-open' : ''}`}>
+        <div className="rw-brand-row">
+          <Link to="/recruiter" className="rw-brand">
+            <span className="rw-mark">T</span>
+            <span>Talent<span className="rw-brand-iq">IQ</span></span>
+            <span className="rw-brand-badge">PORTAL</span>
+          </Link>
+          <button className="rw-icon mobile-only" onClick={() => setOpen(false)} aria-label="Close menu">
+            <X size={18} />
+          </button>
+        </div>
+        <div className="rw-workspace-label">WORKSPACE</div>
+        <nav className="rw-nav">
+          {navItems.map(([to, Icon, label], i) => (
+            <NavLink
+              key={label}
+              to={to}
+              end={i === 0}
+              onClick={() => setOpen(false)}
+              className={({ isActive }) =>
+                `rw-nav-link ${isActive || (label === 'Candidates' && location.pathname.includes('/candidates')) ? 'active' : ''}`
+              }
+            >
+              <Icon size={18} />
+              <span>{label}</span>
+            </NavLink>
+          ))}
+        </nav>
+        <div className="rw-sidebar-foot">
+          <div className="rw-company-chip">
+            <Building2 size={14} />
+            <span>{profile?.company_name || 'Recruiter workspace'}</span>
+          </div>
+          <Link to="/recruiter/settings">
+            <Settings2 size={16} /> Settings
+          </Link>
+          <button
+            onClick={() =>
+              void signOut().then(result => {
+                if (!result.error) navigate('/login')
+              })
+            }
+          >
+            <LogOut size={16} /> Sign out
+          </button>
+          <div className="rw-user">
+            <span>{initials}</span>
+            <div>
+              <strong>{fullName}</strong>
+              <small>{profile?.company_name || 'Recruiter'}</small>
+            </div>
+          </div>
+        </div>
+      </aside>
+      {open && <button className="rw-scrim" onClick={() => setOpen(false)} aria-label="Close navigation" />}
+      <main className="rw-main">
+        <header className="rw-topbar">
+          <button className="rw-icon mobile-only" onClick={() => setOpen(true)} aria-label="Open menu">
+            <Menu size={18} />
+          </button>
+          <div className="rw-breadcrumb">
+            <span>Workspace</span>
+            <ChevronRight size={14} />
+            <strong>{section.replaceAll('-', ' ')}</strong>
+          </div>
+          <div className="rw-top-right">
+            <span className="rw-live-indicator">
+              <span className="rw-pulse-dot" /> Live Workspace
+            </span>
+            <span className="rw-company-top">{profile?.company_name || 'TalentIQ Recruiter'}</span>
+          </div>
+        </header>
+        <Outlet />
+      </main>
+    </div>
+  )
 }
 
-function PageTitle({eyebrow, title, description, action}:{eyebrow?:string;title:string;description?:string;action?:ReactNode}) { return <div className="rw-title-row"><div><div className="rw-eyebrow">{eyebrow || 'TALENTIQ WORKSPACE'}</div><h1>{title}</h1>{description&&<p>{description}</p>}</div>{action}</div> }
-function Loading({label='Loading workspace…'}:{label?:string}) { return <div className="rw-loading"><LoaderCircle className="rw-spin" size={19}/>{label}</div> }
-function ErrorBox({message}:{message:string}) { return <div className="rw-error" role="alert">{message}</div> }
-function Empty({title,body,action}:{title:string;body:string;action?:React.ReactNode}) { return <div className="rw-empty"><span><FileSearch size={22}/></span><h3>{title}</h3><p>{body}</p>{action}</div> }
-function date(value?:string|null) { return value ? new Date(value).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}) : '—' }
-function num(value:unknown) { return typeof value==='number' ? value : value==null ? null : Number(value) }
-function Score({value}:{value:unknown}) { const n=num(value); return n==null||Number.isNaN(n) ? <span className="rw-score-missing">Not scored</span> : <span className="rw-score"><i><b style={{width:`${Math.max(0,Math.min(n,100))}%`}}/></i>{n.toFixed(0)}%</span> }
-function skills(value:unknown):string[] { if(Array.isArray(value)) return value.map(x=>typeof x==='string'?x:String((x as {name?:string})?.name||'')).filter(Boolean); if(value&&typeof value==='object') return Object.values(value as Record<string,unknown>).flatMap(skills); return [] }
+function PageTitle({
+  eyebrow,
+  title,
+  description,
+  action,
+}: {
+  eyebrow?: string
+  title: string
+  description?: string
+  action?: ReactNode
+}) {
+  return (
+    <div className="rw-title-row">
+      <div>
+        <div className="rw-eyebrow">{eyebrow || 'TALENTIQ WORKSPACE'}</div>
+        <h1>{title}</h1>
+        {description && <p>{description}</p>}
+      </div>
+      {action}
+    </div>
+  )
+}
+
+function Loading({ label = 'Loading workspace…' }: { label?: string }) {
+  return (
+    <div className="rw-loading">
+      <LoaderCircle className="rw-spin" size={20} />
+      <span>{label}</span>
+    </div>
+  )
+}
+
+function ErrorBox({ message }: { message: string }) {
+  return (
+    <div className="rw-error" role="alert">
+      <AlertCircle size={18} />
+      <span>{message}</span>
+    </div>
+  )
+}
+
+function Empty({ title, body, action }: { title: string; body: string; action?: React.ReactNode }) {
+  return (
+    <div className="rw-empty">
+      <div className="rw-empty-icon">
+        <FileSearch size={24} />
+      </div>
+      <h3>{title}</h3>
+      <p>{body}</p>
+      {action}
+    </div>
+  )
+}
+
+function date(value?: string | null) {
+  return value
+    ? new Date(value).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+    : '—'
+}
+
+function num(value: unknown) {
+  return typeof value === 'number' ? value : value == null ? null : Number(value)
+}
+
+function Score({ value }: { value: unknown }) {
+  const n = num(value)
+  return n == null || Number.isNaN(n) ? (
+    <span className="rw-score-missing">Not scored</span>
+  ) : (
+    <span className="rw-score">
+      <i>
+        <b style={{ width: `${Math.max(0, Math.min(n, 100))}%` }} />
+      </i>
+      {n.toFixed(0)}%
+    </span>
+  )
+}
+
+function skills(value: unknown): string[] {
+  if (Array.isArray(value))
+    return value.map(x => (typeof x === 'string' ? x : String((x as { name?: string })?.name || ''))).filter(Boolean)
+  if (value && typeof value === 'object') return Object.values(value as Record<string, unknown>).flatMap(skills)
+  return []
+}
 
 export function RecruiterDashboardPage() {
-  const [data,setData]=useState<RecruiterMetrics|null>(null);const [error,setError]=useState('')
-  useEffect(()=>{void getRecruiterDashboard().then(setData).catch(e=>setError(e.message))},[])
-  if(error)return <section className="rw-content"><ErrorBox message={error}/></section>
-  if(!data)return <section className="rw-content"><Loading/></section>
-  const cards=[['Active jobs',data.active_jobs,'Published roles'],['Total candidates',data.total_candidates,'Applied to your jobs'],['Shortlisted',data.shortlisted_candidates,'Across your roles'],['Average match score',data.average_match_score==null?'—':`${data.average_match_score}%`,'From saved screening results']]
-  const fullName=data.profile.full_name||'there'
-  return <section className="rw-content"><PageTitle eyebrow="RECRUITER DASHBOARD" title={`Welcome, ${fullName.split(' ')[0]}`} description="A current view of your jobs, applications, and screening activity." action={<Link className="rw-button primary" to="/recruiter/jobs/new"><Plus size={16}/> Create a job</Link>}/><div className="rw-metrics">{cards.map(([label,value,foot])=><article className="rw-metric" key={String(label)}><div>{label}</div><strong>{value}</strong><small>{foot}</small></article>)}</div><div className="rw-dashboard-grid"><section className="rw-panel"><div className="rw-panel-head"><div><h2>Recent jobs</h2><p>Your latest job postings</p></div><Link to="/recruiter/jobs">All jobs <ArrowRight size={14}/></Link></div>{data.jobs.length?<div className="rw-job-list">{data.jobs.map(job=><Link className="rw-job-row" key={job.id} to={`/recruiter/jobs/${job.id}`}><span className="rw-job-glyph"><BriefcaseBusiness size={17}/></span><span className="rw-job-info"><strong>{job.title}</strong><small>{job.department||job.location||'No department or location'}</small></span><span className={`rw-status ${job.status}`}>{job.status}</span></Link>)}</div>:<Empty title="No jobs created yet" body="Create your first job to start screening candidates." action={<Link className="rw-button primary" to="/recruiter/jobs/new">Create a job</Link>}/>}</section><section className="rw-panel"><div className="rw-panel-head"><div><h2>Recent activity</h2><p>Latest job activity from your workspace</p></div><CalendarDays size={17}/></div>{data.recent_activity.length?<div className="rw-activity">{data.recent_activity.map((a,i)=><div className="rw-activity-row" key={`${a.job_id}-${i}`}><span className="rw-activity-dot"/><div><strong>{a.title}</strong><small>{a.kind === 'shortlist' ? 'Candidate shortlisted' : a.kind === 'note' ? 'Candidate note added' : 'Job created'} · {date(a.created_at)}</small></div></div>)}</div>:<Empty title="No recent activity" body="New jobs and candidate activity will appear here."/>}</section></div></section>
+  const [data, setData] = useState<RecruiterMetrics | null>(null)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    void getRecruiterDashboard().then(setData).catch(e => setError(e.message))
+  }, [])
+
+  if (error)
+    return (
+      <section className="rw-content">
+        <ErrorBox message={error} />
+      </section>
+    )
+  if (!data)
+    return (
+      <section className="rw-content">
+        <Loading />
+      </section>
+    )
+
+  const cards = [
+    { label: 'Active jobs', value: data.active_jobs, foot: 'Published roles', icon: BriefcaseBusiness },
+    { label: 'Total candidates', value: data.total_candidates, foot: 'Applied to your jobs', icon: Users },
+    { label: 'Shortlisted', value: data.shortlisted_candidates, foot: 'Across your roles', icon: BookmarkCheck },
+    {
+      label: 'Average match score',
+      value: data.average_match_score == null ? '—' : `${data.average_match_score}%`,
+      foot: 'From saved screening results',
+      icon: Award,
+    },
+  ]
+
+  const fullName = data.profile.full_name || 'there'
+
+  return (
+    <section className="rw-content">
+      <PageTitle
+        eyebrow="RECRUITER DASHBOARD"
+        title={`Welcome, ${fullName.split(' ')[0]}`}
+        description="A current view of your jobs, applications, and screening activity."
+        action={
+          <Link className="rw-button primary" to="/recruiter/jobs/new">
+            <Plus size={16} /> Create a job
+          </Link>
+        }
+      />
+      <div className="rw-metrics">
+        {cards.map(c => {
+          const Icon = c.icon
+          return (
+            <article className="rw-metric" key={c.label}>
+              <div className="rw-metric-top">
+                <span className="rw-metric-label">{c.label}</span>
+                <div className="rw-metric-icon">
+                  <Icon size={18} />
+                </div>
+              </div>
+              <strong>{c.value}</strong>
+              <small>{c.foot}</small>
+            </article>
+          )
+        })}
+      </div>
+      <div className="rw-dashboard-grid">
+        <section className="rw-panel">
+          <div className="rw-panel-head">
+            <div>
+              <h2>Recent jobs</h2>
+              <p>Your latest job postings</p>
+            </div>
+            <Link to="/recruiter/jobs">
+              All jobs <ArrowRight size={14} />
+            </Link>
+          </div>
+          {data.jobs.length ? (
+            <div className="rw-job-list">
+              {data.jobs.map(job => (
+                <Link className="rw-job-row" key={job.id} to={`/recruiter/jobs/${job.id}`}>
+                  <span className="rw-job-glyph">
+                    <BriefcaseBusiness size={18} />
+                  </span>
+                  <span className="rw-job-info">
+                    <strong>{job.title}</strong>
+                    <small>{job.department || job.location || 'No department or location'}</small>
+                  </span>
+                  <span className={`rw-status ${job.status}`}>{job.status}</span>
+                  <ChevronRight size={15} style={{ color: 'var(--rw-slate-400)', marginLeft: 'auto' }} />
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <Empty
+              title="No jobs created yet"
+              body="Create your first job to start screening candidates."
+              action={
+                <Link className="rw-button primary" to="/recruiter/jobs/new">
+                  <Plus size={15} /> Create a job
+                </Link>
+              }
+            />
+          )}
+        </section>
+        <section className="rw-panel">
+          <div className="rw-panel-head">
+            <div>
+              <h2>Recent activity</h2>
+              <p>Latest job activity from your workspace</p>
+            </div>
+            <CalendarDays size={18} style={{ color: 'var(--rw-emerald-600)' }} />
+          </div>
+          {data.recent_activity.length ? (
+            <div className="rw-activity">
+              {data.recent_activity.map((a, i) => (
+                <div className="rw-activity-row" key={`${a.job_id}-${i}`}>
+                  <span className="rw-activity-dot" />
+                  <div>
+                    <strong>{a.title}</strong>
+                    <small>
+                      {a.kind === 'shortlist'
+                        ? 'Candidate shortlisted'
+                        : a.kind === 'note'
+                        ? 'Candidate note added'
+                        : 'Job created'}{' '}
+                      · {date(a.created_at)}
+                    </small>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <Empty title="No recent activity" body="New jobs and candidate activity will appear here." />
+          )}
+        </section>
+      </div>
+    </section>
+  )
 }
 
 export function RecruiterJobsPage() {
-  const [jobs,setJobs]=useState<JobRecord[]|null>(null);const[error,setError]=useState('');const[busy,setBusy]=useState('')
-  const reload=()=>void getRecruiterJobs().then(setJobs).catch(e=>setError(e.message))
-  useEffect(reload,[])
-  async function remove(job:JobRecord){if(!window.confirm(`Delete “${job.title}”? This also removes its associated workspace records.`))return;setBusy(job.id);setError('');try{await deleteJob(job.id);reload()}catch(e){setError(e instanceof Error?e.message:'This job could not be deleted.')}finally{setBusy('')}}
-  return <section className="rw-content"><PageTitle title="Jobs" description="Manage your job postings and review their candidate pipelines." action={<Link className="rw-button primary" to="/recruiter/jobs/new"><Plus size={16}/> Create a job</Link>}/>{error&&<ErrorBox message={error}/ >}{jobs===null?<Loading label="Loading your jobs…"/>:jobs.length===0?<Empty title="No jobs created yet" body="Create your first job to start screening candidates." action={<Link className="rw-button primary" to="/recruiter/jobs/new">Create your first job</Link>}/>:<div className="rw-panel rw-table-panel"><div className="rw-table-scroll"><table className="rw-table"><thead><tr><th>JOB TITLE</th><th>LOCATION</th><th>TYPE</th><th>STATUS</th><th>ANALYSIS</th><th>CANDIDATES</th><th>CREATED</th><th>ACTIONS</th></tr></thead><tbody>{jobs.map(j=><tr key={j.id}><td><strong>{j.title}</strong><small>{j.department||'—'}</small></td><td>{j.location||'—'}</td><td>{j.employment_type?.replaceAll('_',' ')||'—'}</td><td><span className={`rw-status ${j.status}`}>{j.status}</span></td><td>{j.analysis_status||'pending'}</td><td>{(j as JobRecord & {candidate_count?:number}).candidate_count??0}</td><td>{date(j.created_at)}</td><td><span className="rw-row-actions"><Link title="View" to={`/recruiter/jobs/${j.id}`}><Eye size={15}/></Link><Link title="Edit" to={`/jobs/${j.id}`}><Pencil size={15}/></Link><Link title="View candidates" to={`/recruiter/jobs/${j.id}/candidates`}><Users size={15}/></Link><button title="Delete" disabled={busy===j.id} onClick={()=>void remove(j)}><Trash2 size={15}/></button></span></td></tr>)}</tbody></table></div></div>}</section>
+  const [jobs, setJobs] = useState<JobRecord[] | null>(null)
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState('')
+
+  const reload = () => void getRecruiterJobs().then(setJobs).catch(e => setError(e.message))
+  useEffect(reload, [])
+
+  async function remove(job: JobRecord) {
+    if (!window.confirm(`Delete “${job.title}”? This also removes its associated workspace records.`)) return
+    setBusy(job.id)
+    setError('')
+    try {
+      await deleteJob(job.id)
+      reload()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'This job could not be deleted.')
+    } finally {
+      setBusy('')
+    }
+  }
+
+  return (
+    <section className="rw-content">
+      <PageTitle
+        eyebrow="JOB MANAGEMENT"
+        title="Jobs"
+        description="Manage your job postings and review their candidate pipelines."
+        action={
+          <Link className="rw-button primary" to="/recruiter/jobs/new">
+            <Plus size={16} /> Create a job
+          </Link>
+        }
+      />
+      {error && <ErrorBox message={error} />}
+      {jobs === null ? (
+        <Loading label="Loading your jobs…" />
+      ) : jobs.length === 0 ? (
+        <Empty
+          title="No jobs created yet"
+          body="Create your first job to start screening candidates."
+          action={
+            <Link className="rw-button primary" to="/recruiter/jobs/new">
+              <Plus size={15} /> Create your first job
+            </Link>
+          }
+        />
+      ) : (
+        <div className="rw-panel rw-table-panel">
+          <div className="rw-table-scroll">
+            <table className="rw-table">
+              <thead>
+                <tr>
+                  <th>Job title</th>
+                  <th>Location</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Analysis</th>
+                  <th>Candidates</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {jobs.map(j => (
+                  <tr key={j.id}>
+                    <td>
+                      <strong>{j.title}</strong>
+                      <small>{j.department || '—'}</small>
+                    </td>
+                    <td>{j.location || '—'}</td>
+                    <td>{j.employment_type?.replaceAll('_', ' ') || '—'}</td>
+                    <td>
+                      <span className={`rw-status ${j.status}`}>{j.status}</span>
+                    </td>
+                    <td>
+                      <span style={{ textTransform: 'capitalize', fontWeight: 500 }}>{j.analysis_status || 'pending'}</span>
+                    </td>
+                    <td>
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          minWidth: '24px',
+                          padding: '2px 8px',
+                          borderRadius: '12px',
+                          background: 'var(--rw-slate-100)',
+                          fontWeight: 600,
+                          fontSize: '12px',
+                        }}
+                      >
+                        {(j as JobRecord & { candidate_count?: number }).candidate_count ?? 0}
+                      </span>
+                    </td>
+                    <td>{date(j.created_at)}</td>
+                    <td>
+                      <span className="rw-row-actions">
+                        <Link title="View job details" to={`/recruiter/jobs/${j.id}`}>
+                          <Eye size={15} />
+                        </Link>
+                        <Link title="Edit job" to={`/jobs/${j.id}`}>
+                          <Pencil size={15} />
+                        </Link>
+                        <Link title="View candidates" to={`/recruiter/jobs/${j.id}/candidates`}>
+                          <Users size={15} />
+                        </Link>
+                        <button title="Delete job" disabled={busy === j.id} onClick={() => void remove(j)}>
+                          <Trash2 size={15} />
+                        </button>
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </section>
+  )
 }
 
 export function RecruiterJobDetailPage() {
-  const {jobId=''}=useParams();const[job,setJob]=useState<JobRecord|null>(null);const[error,setError]=useState('')
-  useEffect(()=>{void getJob(jobId).then(setJob).catch(e=>setError(e.message))},[jobId])
-  if(error)return <section className="rw-content"><ErrorBox message={error}/></section>;if(!job)return <section className="rw-content"><Loading/></section>
-  return <section className="rw-content"><Link className="rw-back" to="/recruiter/jobs"><ArrowLeft size={15}/> All jobs</Link><PageTitle eyebrow={`JOB · ${job.status.toUpperCase()}`} title={job.title} description={[job.department,job.location,job.employment_type?.replaceAll('_',' ')].filter(Boolean).join(' · ')} action={<div className="rw-actions"><Link className="rw-button secondary" to={`/jobs/${job.id}`}><Pencil size={15}/> Edit job</Link><Link className="rw-button primary" to={`/recruiter/jobs/${job.id}/candidates`}><Users size={15}/> View candidates</Link></div>}/><div className="rw-detail-grid"><article className="rw-panel rw-detail-copy"><h2>Job description</h2><p className="rw-preserve">{job.description}</p>{job.summary&&<><h2>Summary</h2><p>{job.summary}</p></>}{job.responsibilities?.length>0&&<><h2>Responsibilities</h2><ul>{job.responsibilities.map((x,i)=><li key={i}>{x}</li>)}</ul></>}</article><aside className="rw-panel rw-facts"><h2>Role details</h2><Fact label="Location" value={job.location}/><Fact label="Employment type" value={job.employment_type?.replaceAll('_',' ')}/><Fact label="Work mode" value={(job as JobRecord & {work_mode?:string}).work_mode}/><Fact label="Experience" value={job.experience_min!=null?`${job.experience_min}+ years${job.experience_max!=null?` · up to ${job.experience_max}`:''}`:null}/><Fact label="Education" value={job.education_requirement}/><Fact label="Status" value={job.status}/><Fact label="Candidates" value={(job as JobRecord & {candidate_count?:number}).candidate_count}/></aside></div><section className="rw-panel rw-requirements"><h2>Skills and requirements</h2>{job.requirements?.length?<div className="rw-chips">{job.requirements.map((r,i)=><span key={`${r.name}-${i}`} className={r.importance==='required'?'required':''}>{r.name}<small>{r.importance}</small></span>)}</div>:<p>No extracted requirements available for this job.</p>}</section></section>
+  const { jobId = '' } = useParams()
+  const [job, setJob] = useState<JobRecord | null>(null)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    void getJob(jobId).then(setJob).catch(e => setError(e.message))
+  }, [jobId])
+
+  if (error)
+    return (
+      <section className="rw-content">
+        <ErrorBox message={error} />
+      </section>
+    )
+  if (!job)
+    return (
+      <section className="rw-content">
+        <Loading />
+      </section>
+    )
+
+  return (
+    <section className="rw-content">
+      <Link className="rw-back" to="/recruiter/jobs">
+        <ArrowLeft size={15} /> All jobs
+      </Link>
+      <PageTitle
+        eyebrow={`JOB · ${job.status.toUpperCase()}`}
+        title={job.title}
+        description={[job.department, job.location, job.employment_type?.replaceAll('_', ' ')].filter(Boolean).join(' · ')}
+        action={
+          <div className="rw-actions">
+            <Link className="rw-button secondary" to={`/jobs/${job.id}`}>
+              <Pencil size={15} /> Edit job
+            </Link>
+            <Link className="rw-button primary" to={`/recruiter/jobs/${job.id}/candidates`}>
+              <Users size={15} /> View candidates
+            </Link>
+          </div>
+        }
+      />
+      <div className="rw-detail-grid">
+        <article className="rw-panel rw-detail-copy">
+          <h2>Job description</h2>
+          <p className="rw-preserve">{job.description}</p>
+          {job.summary && (
+            <>
+              <h2>Summary</h2>
+              <p>{job.summary}</p>
+            </>
+          )}
+          {job.responsibilities && job.responsibilities.length > 0 && (
+            <>
+              <h2>Responsibilities</h2>
+              <ul>
+                {job.responsibilities.map((x, i) => (
+                  <li key={i}>{x}</li>
+                ))}
+              </ul>
+            </>
+          )}
+        </article>
+        <aside className="rw-panel rw-facts">
+          <h2>Role details</h2>
+          <Fact label="Location" value={job.location} />
+          <Fact label="Employment type" value={job.employment_type?.replaceAll('_', ' ')} />
+          <Fact label="Work mode" value={(job as JobRecord & { work_mode?: string }).work_mode} />
+          <Fact
+            label="Experience"
+            value={
+              job.experience_min != null
+                ? `${job.experience_min}+ years${job.experience_max != null ? ` · up to ${job.experience_max}` : ''}`
+                : null
+            }
+          />
+          <Fact label="Education" value={job.education_requirement} />
+          <Fact label="Status" value={job.status} />
+          <Fact label="Candidates" value={(job as JobRecord & { candidate_count?: number }).candidate_count} />
+        </aside>
+      </div>
+      <section className="rw-panel rw-requirements">
+        <h2>Skills and requirements</h2>
+        {job.requirements?.length ? (
+          <div className="rw-chips">
+            {job.requirements.map((r, i) => (
+              <span key={`${r.name}-${i}`} className={r.importance === 'required' ? 'required' : ''}>
+                {r.name}
+                <small>{r.importance}</small>
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className="rw-muted">No extracted requirements available for this job.</p>
+        )}
+      </section>
+    </section>
+  )
 }
-function Fact({label,value}:{label:string;value:unknown}){return <div className="rw-fact"><small>{label}</small><strong>{value==null||value===''?'Not specified':String(value)}</strong></div>}
+
+function Fact({ label, value }: { label: string; value: unknown }) {
+  return (
+    <div className="rw-fact">
+      <small>{label}</small>
+      <strong>{value == null || value === '' ? 'Not specified' : String(value)}</strong>
+    </div>
+  )
+}
 
 export function RecruiterCandidatesPage() {
-  const {jobId=''}=useParams();const navigate=useNavigate();const [page,setPage]=useState<CandidatePage|null>(null);const[loading,setLoading]=useState(true);const[error,setError]=useState('');const[q,setQ]=useState('');const[query,setQuery]=useState('');const[score,setScore]=useState('all');const[shortlist,setShortlist]=useState('all');const[experience,setExperience]=useState('all');const[skill,setSkill]=useState('');const[sort,setSort]=useState('recent');const[pageNum,setPageNum]=useState(1);const[selected,setSelected]=useState<string[]>([]);const[jobTitle,setJobTitle]=useState('')
-  useEffect(()=>{const t=setTimeout(()=>setQuery(q),250);return()=>clearTimeout(t)},[q])
-  useEffect(()=>{let live=true;setLoading(true);setError('');void Promise.all([getCandidates(jobId,{page:pageNum,page_size:15,q:query,score,shortlist,experience,skill,sort}),getJob(jobId)]).then(([rows,job])=>{if(live){setPage(rows);setJobTitle(job.title)}}).catch(e=>{if(live)setError(e.message)}).finally(()=>{if(live)setLoading(false)});return()=>{live=false}},[jobId,pageNum,query,score,shortlist,experience,skill,sort])
-  const toggle=(id:string)=>setSelected(current=>current.includes(id)?current.filter(x=>x!==id):current.length>=5?current:[...current,id])
-  const compare=()=>{if(selected.length<2)return;void compareCandidates(jobId,selected).then(rows=>navigate('/recruiter/compare',{state:{jobId,jobTitle,candidates:rows}})).catch(e=>setError(e.message))}
-  return <section className="rw-content"><PageTitle eyebrow="CANDIDATE PIPELINE" title={jobTitle||'Candidates'} description="Review applied candidates and persisted Task 6 screening results." action={<Link className="rw-button secondary" to={`/jobs/${jobId}/matching`}><Sparkles size={15}/> Run matching</Link>}/>{error&&<ErrorBox message={error}/>}<div className="rw-panel rw-filters"><label className="rw-search"><Search size={16}/><input value={q} onChange={e=>{setQ(e.target.value);setPageNum(1)}} placeholder="Search names, email, or skills"/></label><SlidersHorizontal className="rw-filter-icon" size={17}/><select aria-label="Match score" value={score} onChange={e=>{setScore(e.target.value);setPageNum(1)}}><option value="all">All scores</option><option value="80+">80+</option><option value="70+">70+</option><option value="60+">60+</option><option value="below60">Below 60</option></select><select aria-label="Shortlist status" value={shortlist} onChange={e=>{setShortlist(e.target.value);setPageNum(1)}}><option value="all">All shortlist states</option><option value="yes">Shortlisted</option><option value="no">Not shortlisted</option></select><select aria-label="Experience" value={experience} onChange={e=>{setExperience(e.target.value);setPageNum(1)}}><option value="all">All experience</option><option value="1+">1+ years</option><option value="3+">3+ years</option><option value="5+">5+ years</option></select><select aria-label="Required skill" value={skill} onChange={e=>{setSkill(e.target.value);setPageNum(1)}}><option value="">Any required skill</option>{page?.required_skills.map(s=><option key={s}>{s}</option>)}</select><select aria-label="Sort candidates" value={sort} onChange={e=>setSort(e.target.value)}><option value="recent">Recently added</option><option value="updated">Recently updated</option><option value="score">Match score</option><option value="experience">Experience</option></select></div>{selected.length>=2&&<div className="rw-compare-banner"><span>{selected.length} candidates selected</span><button className="rw-button primary" onClick={compare}><GitCompareArrows size={15}/> Compare</button><button className="rw-text-button" onClick={()=>setSelected([])}>Clear</button></div>}{loading?<Loading label="Loading candidate pipeline…"/>:page?.items.length?<div className="rw-panel rw-table-panel"><div className="rw-table-scroll"><table className="rw-table rw-candidate-table"><thead><tr><th></th><th>CANDIDATE</th><th>MATCH</th><th>SKILLS</th><th>EXPERIENCE</th><th>EDUCATION</th><th>PROJECTS</th><th>SHORTLIST</th><th>APPLIED</th><th></th></tr></thead><tbody>{page.items.map(row=><tr key={row.candidate_id}><td><input type="checkbox" aria-label={`Select ${row.candidate.full_name||'candidate'}`} checked={selected.includes(row.candidate_id)} disabled={!selected.includes(row.candidate_id)&&selected.length>=5} onChange={()=>toggle(row.candidate_id)}/></td><td><Link className="rw-person" to={`/recruiter/jobs/${jobId}/candidates/${row.candidate_id}`}><strong>{row.candidate.full_name||'Candidate'}</strong><small>{row.candidate.email||'Email not available'}</small></Link></td><td><Score value={row.result?.overall_score}/></td><td>{row.result?<Score value={row.result.skills_score}/>:<span className="rw-score-missing">—</span>}</td><td>{row.profile.years_experience!=null?`${row.profile.years_experience} yrs`:row.result?<Score value={row.result.experience_score}/>:<span className="rw-score-missing">—</span>}</td><td>{row.result?<Score value={row.result.education_score}/>:<span className="rw-score-missing">—</span>}</td><td>{row.result?<Score value={row.result.projects_score}/>:<span className="rw-score-missing">—</span>}</td><td><button className={`rw-shortcut ${row.shortlist?'on':''}`} onClick={()=>void updateShortlist(jobId,row.candidate_id,!row.shortlist).then(()=>setPage(current=>current?{...current,items:current.items.map(x=>x.candidate_id===row.candidate_id?{...x,shortlist:row.shortlist?null:{id:'saved',status:'shortlisted',created_at:new Date().toISOString()}}:x)}:current)).catch(e=>setError(e.message))}>{row.shortlist?<><Check size={13}/> Saved</>:<><BookmarkCheck size={13}/> Add</>}</button></td><td>{date(row.applied_at)}</td><td><Link className="rw-detail-link" to={`/recruiter/jobs/${jobId}/candidates/${row.candidate_id}`}>Review <ChevronRight size={14}/></Link></td></tr>)}</tbody></table></div><div className="rw-pagination"><span>{page.total} candidates · Page {page.page} of {Math.max(1,Math.ceil(page.total/page.page_size))}</span><div><button disabled={page.page<=1} onClick={()=>setPageNum(n=>Math.max(1,n-1))}>Previous</button><button disabled={page.page*page.page_size>=page.total} onClick={()=>setPageNum(n=>n+1)}>Next</button></div></div></div>:<Empty title="No candidates are associated with this job yet" body="Candidates appear here after they apply. Screening results show once matching has been run."/>}</section>
+  const { jobId = '' } = useParams()
+  const navigate = useNavigate()
+  const [page, setPage] = useState<CandidatePage | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [q, setQ] = useState('')
+  const [query, setQuery] = useState('')
+  const [score, setScore] = useState('all')
+  const [shortlist, setShortlist] = useState('all')
+  const [experience, setExperience] = useState('all')
+  const [skill, setSkill] = useState('')
+  const [sort, setSort] = useState('recent')
+  const [pageNum, setPageNum] = useState(1)
+  const [selected, setSelected] = useState<string[]>([])
+  const [jobTitle, setJobTitle] = useState('')
+
+  useEffect(() => {
+    const t = setTimeout(() => setQuery(q), 250)
+    return () => clearTimeout(t)
+  }, [q])
+
+  useEffect(() => {
+    let live = true
+    setLoading(true)
+    setError('')
+    void Promise.all([
+      getCandidates(jobId, { page: pageNum, page_size: 15, q: query, score, shortlist, experience, skill, sort }),
+      getJob(jobId),
+    ])
+      .then(([rows, job]) => {
+        if (live) {
+          setPage(rows)
+          setJobTitle(job.title)
+        }
+      })
+      .catch(e => {
+        if (live) setError(e.message)
+      })
+      .finally(() => {
+        if (live) setLoading(false)
+      })
+    return () => {
+      live = false
+    }
+  }, [jobId, pageNum, query, score, shortlist, experience, skill, sort])
+
+  const toggle = (id: string) =>
+    setSelected(current =>
+      current.includes(id) ? current.filter(x => x !== id) : current.length >= 5 ? current : [...current, id]
+    )
+
+  const compare = () => {
+    if (selected.length < 2) return
+    void compareCandidates(jobId, selected)
+      .then(rows => navigate('/recruiter/compare', { state: { jobId, jobTitle, candidates: rows } }))
+      .catch(e => setError(e.message))
+  }
+
+  return (
+    <section className="rw-content">
+      <PageTitle
+        eyebrow="CANDIDATE PIPELINE"
+        title={jobTitle || 'Candidates'}
+        description="Review applied candidates and persisted Task 6 screening results."
+        action={
+          <Link className="rw-button secondary" to={`/jobs/${jobId}/matching`}>
+            <Sparkles size={15} style={{ color: 'var(--rw-emerald-600)' }} /> Run matching
+          </Link>
+        }
+      />
+      {error && <ErrorBox message={error} />}
+      <div className="rw-filters">
+        <label className="rw-search">
+          <Search size={16} />
+          <input
+            value={q}
+            onChange={e => {
+              setQ(e.target.value)
+              setPageNum(1)
+            }}
+            placeholder="Search names, email, or skills"
+          />
+        </label>
+        <SlidersHorizontal className="rw-filter-icon" size={17} />
+        <select
+          aria-label="Match score"
+          value={score}
+          onChange={e => {
+            setScore(e.target.value)
+            setPageNum(1)
+          }}
+        >
+          <option value="all">All scores</option>
+          <option value="80+">80% and above</option>
+          <option value="70+">70% and above</option>
+          <option value="60+">60% and above</option>
+          <option value="below60">Below 60%</option>
+        </select>
+        <select
+          aria-label="Shortlist status"
+          value={shortlist}
+          onChange={e => {
+            setShortlist(e.target.value)
+            setPageNum(1)
+          }}
+        >
+          <option value="all">All shortlist states</option>
+          <option value="yes">Shortlisted</option>
+          <option value="no">Not shortlisted</option>
+        </select>
+        <select
+          aria-label="Experience"
+          value={experience}
+          onChange={e => {
+            setExperience(e.target.value)
+            setPageNum(1)
+          }}
+        >
+          <option value="all">All experience</option>
+          <option value="1+">1+ years</option>
+          <option value="3+">3+ years</option>
+          <option value="5+">5+ years</option>
+        </select>
+        <select
+          aria-label="Required skill"
+          value={skill}
+          onChange={e => {
+            setSkill(e.target.value)
+            setPageNum(1)
+          }}
+        >
+          <option value="">Any required skill</option>
+          {page?.required_skills.map(s => (
+            <option key={s}>{s}</option>
+          ))}
+        </select>
+        <select aria-label="Sort candidates" value={sort} onChange={e => setSort(e.target.value)}>
+          <option value="recent">Recently added</option>
+          <option value="updated">Recently updated</option>
+          <option value="score">Match score</option>
+          <option value="experience">Experience</option>
+        </select>
+      </div>
+
+      {selected.length >= 2 && (
+        <div className="rw-compare-banner">
+          <span>{selected.length} candidates selected for side-by-side review</span>
+          <button className="rw-button primary" onClick={compare}>
+            <GitCompareArrows size={15} /> Compare selected
+          </button>
+          <button className="rw-text-button" onClick={() => setSelected([])}>
+            Clear
+          </button>
+        </div>
+      )}
+
+      {loading ? (
+        <Loading label="Loading candidate pipeline…" />
+      ) : page?.items.length ? (
+        <div className="rw-panel rw-table-panel">
+          <div className="rw-table-scroll">
+            <table className="rw-table rw-candidate-table">
+              <thead>
+                <tr>
+                  <th style={{ width: '40px' }}></th>
+                  <th>Candidate</th>
+                  <th>Match</th>
+                  <th>Skills</th>
+                  <th>Experience</th>
+                  <th>Education</th>
+                  <th>Projects</th>
+                  <th>Shortlist</th>
+                  <th>Applied</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {page.items.map(row => (
+                  <tr key={row.candidate_id}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        aria-label={`Select ${row.candidate.full_name || 'candidate'}`}
+                        checked={selected.includes(row.candidate_id)}
+                        disabled={!selected.includes(row.candidate_id) && selected.length >= 5}
+                        onChange={() => toggle(row.candidate_id)}
+                        style={{ accentColor: 'var(--rw-emerald-600)', cursor: 'pointer' }}
+                      />
+                    </td>
+                    <td>
+                      <Link className="rw-person" to={`/recruiter/jobs/${jobId}/candidates/${row.candidate_id}`}>
+                        <strong>{row.candidate.full_name || 'Candidate'}</strong>
+                        <small>{row.candidate.email || 'Email not available'}</small>
+                      </Link>
+                    </td>
+                    <td>
+                      <Score value={row.result?.overall_score} />
+                    </td>
+                    <td>{row.result ? <Score value={row.result.skills_score} /> : <span className="rw-score-missing">—</span>}</td>
+                    <td>
+                      {row.profile.years_experience != null ? (
+                        `${row.profile.years_experience} yrs`
+                      ) : row.result ? (
+                        <Score value={row.result.experience_score} />
+                      ) : (
+                        <span className="rw-score-missing">—</span>
+                      )}
+                    </td>
+                    <td>{row.result ? <Score value={row.result.education_score} /> : <span className="rw-score-missing">—</span>}</td>
+                    <td>{row.result ? <Score value={row.result.projects_score} /> : <span className="rw-score-missing">—</span>}</td>
+                    <td>
+                      <button
+                        className={`rw-shortcut ${row.shortlist ? 'on' : ''}`}
+                        onClick={() =>
+                          void updateShortlist(jobId, row.candidate_id, !row.shortlist)
+                            .then(() =>
+                              setPage(current =>
+                                current
+                                  ? {
+                                      ...current,
+                                      items: current.items.map(x =>
+                                        x.candidate_id === row.candidate_id
+                                          ? {
+                                              ...x,
+                                              shortlist: row.shortlist
+                                                ? null
+                                                : { id: 'saved', status: 'shortlisted', created_at: new Date().toISOString() },
+                                            }
+                                          : x
+                                      ),
+                                    }
+                                  : current
+                              )
+                            )
+                            .catch(e => setError(e.message))
+                        }
+                      >
+                        {row.shortlist ? (
+                          <>
+                            <Check size={13} /> Saved
+                          </>
+                        ) : (
+                          <>
+                            <BookmarkCheck size={13} /> Add
+                          </>
+                        )}
+                      </button>
+                    </td>
+                    <td>{date(row.applied_at)}</td>
+                    <td>
+                      <Link className="rw-detail-link" to={`/recruiter/jobs/${jobId}/candidates/${row.candidate_id}`}>
+                        Review <ChevronRight size={14} />
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="rw-pagination">
+            <span>
+              {page.total} candidates · Page {page.page} of {Math.max(1, Math.ceil(page.total / page.page_size))}
+            </span>
+            <div>
+              <button disabled={page.page <= 1} onClick={() => setPageNum(n => Math.max(1, n - 1))}>
+                Previous
+              </button>
+              <button disabled={page.page * page.page_size >= page.total} onClick={() => setPageNum(n => n + 1)}>
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <Empty
+          title="No candidates are associated with this job yet"
+          body="Candidates appear here after they apply. Screening results show once matching has been run."
+        />
+      )}
+    </section>
+  )
 }
 
 export function CandidateDetailPage() {
-  const {jobId='',candidateId=''}=useParams();const[row,setRow]=useState<WorkspaceCandidate|null>(null);const[explanation,setExplanation]=useState<RankingExplanation|null>(null);const[loading,setLoading]=useState(true);const[error,setError]=useState('');const[note,setNote]=useState('');const[editing,setEditing]=useState('');const[editText,setEditText]=useState('');const[busy,setBusy]=useState(false)
-  const reload=()=>void Promise.all([getCandidate(jobId,candidateId),getJob(jobId)]).then(async([candidate,job])=>{setRow(candidate);if(candidate.result){try{setExplanation(await getRankingExplanation(job.id,candidate.resume_id))}catch{/* explanations need a persisted Task 6 result */}}}).catch(e=>setError(e.message)).finally(()=>setLoading(false))
-  useEffect(()=>{setLoading(true);reload()},[jobId,candidateId])
-  if(loading)return <section className="rw-content"><Loading label="Loading candidate profile…"/></section>
-  if(error||!row)return <section className="rw-content"><ErrorBox message={error||'Candidate not found for this job.'}/></section>
-  const resumeSkills=skills(row.profile.skills_json);const result=row.result
-  async function addNote(){if(!note.trim())return;setBusy(true);try{await saveNote(candidateId,jobId,note);setNote('');reload()}catch(e){setError(e instanceof Error?e.message:'Note could not be saved.')}finally{setBusy(false)}}
-  async function updateNote(id:string,text:string){setBusy(true);try{await editNote(id,text);setEditing('');reload()}catch(e){setError(e instanceof Error?e.message:'Note could not be updated.')}finally{setBusy(false)}}
-  async function removeNote(id:string){if(!window.confirm('Delete this note?'))return;try{await deleteNote(id);reload()}catch(e){setError(e instanceof Error?e.message:'Note could not be deleted.')}}
-  async function openResume(){if(!row) return ; const tab=window.open('about:blank','_blank','noopener,noreferrer');try{const file=await getResumeDownload(jobId,candidateId,row.resume_id);if(tab)tab.location.href=file.url;else window.location.assign(file.url)}catch(e){tab?.close();setError(e instanceof Error?e.message:'Resume could not be opened.')}}
-  return <section className="rw-content"><Link className="rw-back" to={`/recruiter/jobs/${jobId}/candidates`}><ArrowLeft size={15}/> Candidate pipeline</Link><PageTitle eyebrow="CANDIDATE PROFILE" title={row.candidate.full_name||'Candidate'} description={[row.candidate.email,row.candidate.location].filter(Boolean).join(' · ')||'Applied candidate'} action={<div className="rw-actions"><button className="rw-button secondary" onClick={()=>void openResume()}><FileSearch size={15}/>{row.resume?.file_name||'Open resume'}</button><button className={`rw-button ${row.shortlist?'secondary':'primary'}`} onClick={()=>void updateShortlist(jobId,candidateId,!row.shortlist).then(reload).catch(e=>setError(e.message))}><BookmarkCheck size={15}/>{row.shortlist?'Remove from shortlist':'Add to shortlist'}</button></div>}/>{error&&<ErrorBox message={error}/>}<div className="rw-candidate-layout"><div className="rw-candidate-main"><section className="rw-panel rw-profile-card"><h2>Profile</h2><p>{row.profile.summary||'No summary was extracted from this resume.'}</p><div className="rw-profile-facts"><Fact label="Email" value={row.candidate.email}/><Fact label="Phone" value={row.candidate.phone}/><Fact label="Location" value={row.candidate.location}/><Fact label="Experience" value={row.profile.years_experience!=null?`${row.profile.years_experience} years`:null}/></div></section><section className="rw-panel"><h2>Skills</h2>{resumeSkills.length?<div className="rw-chips">{resumeSkills.map((s,i)=><span key={`${s}-${i}`}>{s}</span>)}</div>:<p className="rw-muted">No skills extracted.</p>}</section><DataSection title="Experience" items={row.profile.experience_json} fields={['title','company','start_date','end_date','description']}/><DataSection title="Education" items={row.profile.education_json} fields={['degree','field','institution','start_date','end_date']}/><DataSection title="Projects" items={row.profile.projects_json} fields={['name','description','technologies','url']}/><DataSection title="Certifications" items={row.profile.certifications_json} fields={['name','issuer','date']}/><DataSection title="Languages" items={row.profile.languages_json} fields={['name','proficiency']}/><section className="rw-panel rw-notes"><h2><MessageSquare size={17}/> Recruiter notes</h2><textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={5000} placeholder="Add a private note about this candidate…"/><button className="rw-button primary" disabled={busy||!note.trim()} onClick={()=>void addNote()}>{busy?'Saving…':'Add note'}</button>{(row.notes||[]).map(n=><article className="rw-note" key={n.id}>{editing===n.id?<><textarea value={editText} onChange={e=>setEditText(e.target.value)}/><div className="rw-actions"><button className="rw-button primary" onClick={()=>void updateNote(n.id,editText)}>Save</button><button className="rw-button secondary" onClick={()=>setEditing('')}>Cancel</button></div></>:<><p>{n.note}</p><small>{date(n.created_at)}{n.updated_at!==n.created_at?' · edited':''}</small><div><button onClick={()=>{setEditing(n.id);setEditText(n.note)}}>Edit</button><button onClick={()=>void removeNote(n.id)}>Delete</button></div></>}</article>)}</section></div><aside className="rw-candidate-side"><section className="rw-panel rw-score-panel"><h2>Match scores</h2>{result?<div className="rw-score-list"><ScoreLine label="Overall match" value={result.overall_score}/><ScoreLine label="Semantic match" value={result.semantic_score}/><ScoreLine label="Skill match" value={result.skills_score}/><ScoreLine label="Experience match" value={result.experience_score}/><ScoreLine label="Education match" value={result.education_score}/><ScoreLine label="Project match" value={result.projects_score}/></div>:<Empty title="Matching has not been run" body="Run matching for this job to generate persisted Task 6 scores." action={<Link className="rw-button primary" to={`/jobs/${jobId}/matching`}>Open matching</Link>}/>}</section>{explanation&&<section className="rw-panel rw-explain"><h2>Why this score?</h2><p>{explanation.explanation}</p><ExplanationSkills title="Matched skills" items={explanation.matched_skills}/><ExplanationSkills title="Partial skills" items={explanation.partial_skills}/><ExplanationSkills title="Missing skills" items={explanation.missing_skills}/><h3>Strengths</h3>{explanation.strengths.length?explanation.strengths.map((x,i)=><p className="rw-explain-item" key={i}><strong>{x.title}</strong><br/>{x.description}</p>):<p className="rw-muted">No strengths identified.</p>}<h3>Gaps</h3>{explanation.gaps.length?explanation.gaps.map((x,i)=><p className="rw-explain-item" key={i}><strong>{x.title}</strong><br/>{x.description}</p>):<p className="rw-muted">No gaps identified.</p>}<h3>Evidence</h3>{explanation.evidence.length?explanation.evidence.slice(0,8).map((x,i)=><blockquote key={i}>{x.text}<small>{x.source}{x.related_requirement?` · ${x.related_requirement}`:''}</small></blockquote>):<p className="rw-muted">No persisted evidence available.</p>}<h3>Score breakdown</h3>{Object.entries(explanation.score_breakdown).map(([key,item])=><ScoreLine key={key} label={key.replaceAll('_',' ')} value={item.score}/>)}</section>}</aside></div></section>
+  const { jobId = '', candidateId = '' } = useParams()
+  const [row, setRow] = useState<WorkspaceCandidate | null>(null)
+  const [explanation, setExplanation] = useState<RankingExplanation | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [note, setNote] = useState('')
+  const [editing, setEditing] = useState('')
+  const [editText, setEditText] = useState('')
+  const [busy, setBusy] = useState(false)
+
+  const reload = () =>
+    void Promise.all([getCandidate(jobId, candidateId), getJob(jobId)])
+      .then(async ([candidate, job]) => {
+        setRow(candidate)
+        if (candidate.result) {
+          try {
+            setExplanation(await getRankingExplanation(job.id, candidate.resume_id))
+          } catch {
+            /* explanations need a persisted Task 6 result */
+          }
+        }
+      })
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false))
+
+  useEffect(() => {
+    setLoading(true)
+    reload()
+  }, [jobId, candidateId])
+
+  if (loading)
+    return (
+      <section className="rw-content">
+        <Loading label="Loading candidate profile…" />
+      </section>
+    )
+  if (error || !row)
+    return (
+      <section className="rw-content">
+        <ErrorBox message={error || 'Candidate not found for this job.'} />
+      </section>
+    )
+
+  const resumeSkills = skills(row.profile.skills_json)
+  const result = row.result
+
+  async function addNote() {
+    if (!note.trim()) return
+    setBusy(true)
+    try {
+      await saveNote(candidateId, jobId, note)
+      setNote('')
+      reload()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Note could not be saved.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function updateNote(id: string, text: string) {
+    setBusy(true)
+    try {
+      await editNote(id, text)
+      setEditing('')
+      reload()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Note could not be updated.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function removeNote(id: string) {
+    if (!window.confirm('Delete this note?')) return
+    try {
+      await deleteNote(id)
+      reload()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Note could not be deleted.')
+    }
+  }
+
+  async function openResume() {
+    if (!row) return
+    const tab = window.open('about:blank', '_blank', 'noopener,noreferrer')
+    try {
+      const file = await getResumeDownload(jobId, candidateId, row.resume_id)
+      if (tab) tab.location.href = file.url
+      else window.location.assign(file.url)
+    } catch (e) {
+      tab?.close()
+      setError(e instanceof Error ? e.message : 'Resume could not be opened.')
+    }
+  }
+
+  return (
+    <section className="rw-content">
+      <Link className="rw-back" to={`/recruiter/jobs/${jobId}/candidates`}>
+        <ArrowLeft size={15} /> Candidate pipeline
+      </Link>
+      <PageTitle
+        eyebrow="CANDIDATE PROFILE"
+        title={row.candidate.full_name || 'Candidate'}
+        description={[row.candidate.email, row.candidate.location].filter(Boolean).join(' · ') || 'Applied candidate'}
+        action={
+          <div className="rw-actions">
+            <button className="rw-button secondary" onClick={() => void openResume()}>
+              <FileSearch size={15} />
+              {row.resume?.file_name || 'Open resume'}
+            </button>
+            <button
+              className={`rw-button ${row.shortlist ? 'secondary' : 'primary'}`}
+              onClick={() =>
+                void updateShortlist(jobId, candidateId, !row.shortlist)
+                  .then(reload)
+                  .catch(e => setError(e.message))
+              }
+            >
+              <BookmarkCheck size={15} />
+              {row.shortlist ? 'Remove from shortlist' : 'Add to shortlist'}
+            </button>
+          </div>
+        }
+      />
+      {error && <ErrorBox message={error} />}
+      <div className="rw-candidate-layout">
+        <div className="rw-candidate-main">
+          <section className="rw-panel rw-profile-card">
+            <h2>Profile overview</h2>
+            <p>{row.profile.summary || 'No summary was extracted from this resume.'}</p>
+            <div className="rw-profile-facts">
+              <Fact label="Email" value={row.candidate.email} />
+              <Fact label="Phone" value={row.candidate.phone} />
+              <Fact label="Location" value={row.candidate.location} />
+              <Fact
+                label="Experience"
+                value={row.profile.years_experience != null ? `${row.profile.years_experience} years` : null}
+              />
+            </div>
+          </section>
+          <section className="rw-panel">
+            <h2>Extracted skills</h2>
+            {resumeSkills.length ? (
+              <div className="rw-chips">
+                {resumeSkills.map((s, i) => (
+                  <span key={`${s}-${i}`}>{s}</span>
+                ))}
+              </div>
+            ) : (
+              <p className="rw-muted">No skills extracted.</p>
+            )}
+          </section>
+          <DataSection
+            title="Experience"
+            items={row.profile.experience_json}
+            fields={['title', 'company', 'start_date', 'end_date', 'description']}
+          />
+          <DataSection
+            title="Education"
+            items={row.profile.education_json}
+            fields={['degree', 'field', 'institution', 'start_date', 'end_date']}
+          />
+          <DataSection
+            title="Projects"
+            items={row.profile.projects_json}
+            fields={['name', 'description', 'technologies', 'url']}
+          />
+          <DataSection
+            title="Certifications"
+            items={row.profile.certifications_json}
+            fields={['name', 'issuer', 'date']}
+          />
+          <DataSection
+            title="Languages"
+            items={row.profile.languages_json}
+            fields={['name', 'proficiency']}
+          />
+          <section className="rw-panel rw-notes">
+            <h2>
+              <MessageSquare size={17} /> Recruiter notes
+            </h2>
+            <textarea
+              value={note}
+              onChange={e => setNote(e.target.value)}
+              maxLength={5000}
+              placeholder="Add a private note about this candidate…"
+            />
+            <button className="rw-button primary" disabled={busy || !note.trim()} onClick={() => void addNote()}>
+              {busy ? 'Saving…' : 'Add note'}
+            </button>
+            {(row.notes || []).map(n => (
+              <article className="rw-note" key={n.id}>
+                {editing === n.id ? (
+                  <>
+                    <textarea value={editText} onChange={e => setEditText(e.target.value)} />
+                    <div className="rw-actions">
+                      <button className="rw-button primary" onClick={() => void updateNote(n.id, editText)}>
+                        Save
+                      </button>
+                      <button className="rw-button secondary" onClick={() => setEditing('')}>
+                        Cancel
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p>{n.note}</p>
+                    <small>
+                      {date(n.created_at)}
+                      {n.updated_at !== n.created_at ? ' · edited' : ''}
+                    </small>
+                    <div>
+                      <button
+                        onClick={() => {
+                          setEditing(n.id)
+                          setEditText(n.note)
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button onClick={() => void removeNote(n.id)}>Delete</button>
+                    </div>
+                  </>
+                )}
+              </article>
+            ))}
+          </section>
+        </div>
+        <aside className="rw-candidate-side">
+          <section className="rw-panel rw-score-panel">
+            <h2>Match scores</h2>
+            {result ? (
+              <div className="rw-score-list">
+                <ScoreLine label="Overall match" value={result.overall_score} />
+                <ScoreLine label="Semantic match" value={result.semantic_score} />
+                <ScoreLine label="Skill match" value={result.skills_score} />
+                <ScoreLine label="Experience match" value={result.experience_score} />
+                <ScoreLine label="Education match" value={result.education_score} />
+                <ScoreLine label="Project match" value={result.projects_score} />
+              </div>
+            ) : (
+              <Empty
+                title="Matching has not been run"
+                body="Run matching for this job to generate persisted Task 6 scores."
+                action={
+                  <Link className="rw-button primary" to={`/jobs/${jobId}/matching`}>
+                    Open matching
+                  </Link>
+                }
+              />
+            )}
+          </section>
+          {explanation && (
+            <section className="rw-panel rw-explain">
+              <h2>Why this score?</h2>
+              <p>{explanation.explanation}</p>
+              <ExplanationSkills title="Matched skills" items={explanation.matched_skills} />
+              <ExplanationSkills title="Partial skills" items={explanation.partial_skills} />
+              <ExplanationSkills title="Missing skills" items={explanation.missing_skills} />
+              <h3>Strengths</h3>
+              {explanation.strengths.length ? (
+                explanation.strengths.map((x, i) => (
+                  <p className="rw-explain-item" key={i}>
+                    <strong>{x.title}</strong>
+                    <br />
+                    {x.description}
+                  </p>
+                ))
+              ) : (
+                <p className="rw-muted">No strengths identified.</p>
+              )}
+              <h3>Gaps</h3>
+              {explanation.gaps.length ? (
+                explanation.gaps.map((x, i) => (
+                  <p className="rw-explain-item" key={i}>
+                    <strong>{x.title}</strong>
+                    <br />
+                    {x.description}
+                  </p>
+                ))
+              ) : (
+                <p className="rw-muted">No gaps identified.</p>
+              )}
+              <h3>Evidence</h3>
+              {explanation.evidence.length ? (
+                explanation.evidence.slice(0, 8).map((x, i) => (
+                  <blockquote key={i}>
+                    {x.text}
+                    <small>
+                      {x.source}
+                      {x.related_requirement ? ` · ${x.related_requirement}` : ''}
+                    </small>
+                  </blockquote>
+                ))
+              ) : (
+                <p className="rw-muted">No persisted evidence available.</p>
+              )}
+              <h3>Score breakdown</h3>
+              {Object.entries(explanation.score_breakdown).map(([key, item]) => (
+                <ScoreLine key={key} label={key.replaceAll('_', ' ')} value={item.score} />
+              ))}
+            </section>
+          )}
+        </aside>
+      </div>
+    </section>
+  )
 }
-function ScoreLine({label,value}:{label:string;value:unknown}){const n=num(value);return <div className="rw-score-line"><span>{label}</span><Score value={n}/></div>}
-function DataSection({title,items,fields}:{title:string;items?:unknown[];fields:string[]}){return <section className="rw-panel rw-data-section"><h2>{title}</h2>{Array.isArray(items)&&items.length?items.map((item,i)=><div className="rw-data-item" key={i}>{fields.map(field=>{const v=item&&typeof item==='object'?(item as Record<string,unknown>)[field]:null;return v?<p key={field}><strong>{field.replaceAll('_',' ')}:</strong> {Array.isArray(v)?v.join(', '):String(v)}</p>:null})}</div>):<p className="rw-muted">No {title.toLowerCase()} extracted.</p>}</section>}
-function ExplanationSkills({title,items}:{title:string;items:Array<{name:string;resume_skill?:string|null}>}){return <div className="rw-explain-skills"><h3>{title}</h3>{items.length?<div className="rw-chips">{items.map((x,i)=><span key={`${x.name}-${i}`}>{x.name}{x.resume_skill&&x.resume_skill!==x.name?` · ${x.resume_skill}`:''}</span>)}</div>:<p className="rw-muted">None identified.</p>}</div>}
 
-export function ShortlistPage(){const[jobs,setJobs]=useState<JobRecord[]>([]);const[jobId,setJobId]=useState('');const[rows,setRows]=useState<WorkspaceCandidate[]>([]);const[error,setError]=useState('');const[loading,setLoading]=useState(false);const navigate=useNavigate();useEffect(()=>{void getRecruiterJobs().then(j=>{setJobs(j);if(j[0])setJobId(j[0].id)}).catch(e=>setError(e.message))},[]);useEffect(()=>{if(!jobId)return;setLoading(true);void getShortlist(jobId).then(setRows).catch(e=>setError(e.message)).finally(()=>setLoading(false))},[jobId]);return <section className="rw-content"><PageTitle title="Shortlist" description="Candidates you have saved for closer review." action={<select aria-label="Select job" value={jobId} onChange={e=>setJobId(e.target.value)}>{jobs.map(j=><option key={j.id} value={j.id}>{j.title}</option>)}</select>}/>{error&&<ErrorBox message={error}/ >}{loading?<Loading/>:!rows.length?<Empty title="No candidates shortlisted yet" body="Add a candidate to your shortlist from a job's candidate pipeline." action={<Link className="rw-button primary" to="/recruiter/jobs">Browse jobs</Link>}/>:<div className="rw-shortlist-grid">{rows.map(r=><article className="rw-panel rw-shortlist-card" key={r.candidate_id}><div className="rw-shortlist-head"><div><h3>{r.candidate.full_name||'Candidate'}</h3><p>{r.candidate.email}</p></div><BookmarkCheck size={18}/></div><p className="rw-muted">{r.profile.summary||'No candidate summary available.'}</p><div className="rw-card-score"><span>Match score</span><Score value={r.result?.overall_score}/></div><small>Added {date(r.shortlist?.created_at)} · {jobs.find(j=>j.id===jobId)?.title}</small><div className="rw-actions"><Link className="rw-button secondary" to={`/recruiter/jobs/${jobId}/candidates/${r.candidate_id}`}>View candidate</Link><button className="rw-button secondary" onClick={()=>navigate('/recruiter/compare',{state:{jobId,candidates:[r]}})}>Compare</button><button className="rw-text-button danger" onClick={()=>void updateShortlist(jobId,r.candidate_id,false).then(()=>setRows(current=>current.filter(x=>x.candidate_id!==r.candidate_id))).catch(e=>setError(e.message))}>Remove</button></div></article>)}</div>}</section>}
+function ScoreLine({ label, value }: { label: string; value: unknown }) {
+  const n = num(value)
+  return (
+    <div className="rw-score-line">
+      <span>{label}</span>
+      <Score value={n} />
+    </div>
+  )
+}
 
-export function CompareCandidatesPage(){const location=useLocation();const state=location.state as {jobId?:string;jobTitle?:string;candidates?:WorkspaceCandidate[]}|null;const[jobs,setJobs]=useState<JobRecord[]>([]);const[jobId,setJobId]=useState(state?.jobId||'');const[ids,setIds]=useState<string[]>(state?.candidates?.map(x=>x.candidate_id)||[]);const[candidates,setCandidates]=useState<WorkspaceCandidate[]>(state?.candidates||[]);const[error,setError]=useState('');const[busy,setBusy]=useState(false);useEffect(()=>{void getRecruiterJobs().then(js=>{setJobs(js);if(!jobId&&js[0])setJobId(js[0].id)}).catch(e=>setError(e.message))},[]);useEffect(()=>{if(!jobId)return;void getCandidates(jobId,{page:1,page_size:100,sort:'score'}).then(data=>{setCandidates(data.items);if(!ids.length&&data.items.length>=2)setIds(data.items.slice(0,2).map(x=>x.candidate_id))}).catch(e=>setError(e.message))},[jobId]);const selected=candidates.filter(c=>ids.includes(c.candidate_id));async function refresh(){if(ids.length<2||ids.length>5)return;setBusy(true);try{setCandidates(await compareCandidates(jobId,ids))}catch(e){setError(e instanceof Error?e.message:'Comparison failed.')}finally{setBusy(false)}}return <section className="rw-content"><PageTitle title="Compare candidates" description="Review factual profile and saved screening data for candidates on the same job."/>{error&&<ErrorBox message={error}/>}<div className="rw-compare-controls"><select value={jobId} onChange={e=>{setJobId(e.target.value);setIds([])}} aria-label="Job for comparison">{jobs.map(j=><option key={j.id} value={j.id}>{j.title}</option>)}</select><select multiple value={ids} onChange={e=>setIds(Array.from(e.target.selectedOptions,o=>o.value).slice(0,5))} aria-label="Select two to five candidates">{candidates.map(c=><option key={c.candidate_id} value={c.candidate_id}>{c.candidate.full_name||c.candidate.email||c.candidate_id}</option>)}</select><button className="rw-button primary" disabled={busy||ids.length<2} onClick={()=>void refresh()}>{busy?'Loading…':'Compare selected'}</button><small>Select 2–5 candidates associated with this job.</small></div>{selected.length>=2 ? <div className="rw-panel rw-table-panel"><div className="rw-table-scroll"><table className="rw-table rw-compare-table"><thead><tr><th>FACTUAL DATA</th>{selected.map(c=><th key={c.candidate_id}>{c.candidate.full_name||'Candidate'}</th>)}</tr></thead><tbody>{comparisonRows().map(([label,get])=><tr key={label}><td><strong>{label}</strong></td>{selected.map(c=><td key={c.candidate_id}>{get(c)}</td>)}</tr>)}</tbody></table></div></div>:<Empty title="Select candidates to compare" body="Choose two to five candidates who applied to the same job."/>}</section>}
-function comparisonRows():Array<[string,(x:WorkspaceCandidate)=>ReactNode]>{return [['Match score',x=><Score value={x.result?.overall_score}/>],['Semantic score',x=><Score value={x.result?.semantic_score}/>],['Skill score',x=><Score value={x.result?.skills_score}/>],['Experience score',x=><>{x.profile.years_experience!=null?`${x.profile.years_experience} years · `:''}<Score value={x.result?.experience_score}/></>],['Education score',x=><Score value={x.result?.education_score}/>],['Project score',x=><Score value={x.result?.projects_score}/>],['Years experience',x=>x.profile.years_experience==null?'—':`${x.profile.years_experience} years`],['Matched skills count',x=>String(Array.isArray(x.result?.matched_skills)?x.result!.matched_skills!.length:0)],['Missing skills count',x=>String(Array.isArray(x.result?.missing_skills)?x.result!.missing_skills!.length:0)],['Relevant projects',x=>String(Array.isArray(x.profile.projects_json)?x.profile.projects_json.length:0)],['Shortlist status',x=>x.shortlist?'Shortlisted':'Not shortlisted']]}
+function DataSection({ title, items, fields }: { title: string; items?: unknown[]; fields: string[] }) {
+  return (
+    <section className="rw-panel rw-data-section">
+      <h2>{title}</h2>
+      {Array.isArray(items) && items.length ? (
+        items.map((item, i) => (
+          <div className="rw-data-item" key={i}>
+            {fields.map(field => {
+              const v = item && typeof item === 'object' ? (item as Record<string, unknown>)[field] : null
+              return v ? (
+                <p key={field}>
+                  <strong>{field.replaceAll('_', ' ')}:</strong> {Array.isArray(v) ? v.join(', ') : String(v)}
+                </p>
+              ) : null
+            })}
+          </div>
+        ))
+      ) : (
+        <p className="rw-muted">No {title.toLowerCase()} extracted.</p>
+      )}
+    </section>
+  )
+}
 
-export function RecruiterAnalyticsPage(){const[data,setData]=useState<RecruiterMetrics|null>(null);const[error,setError]=useState('');useEffect(()=>{void getRecruiterDashboard().then(setData).catch(e=>setError(e.message))},[]);if(error)return <section className="rw-content"><ErrorBox message={error}/></section>;if(!data)return <section className="rw-content"><Loading/></section>;return <section className="rw-content"><PageTitle title="Analytics" description="Summary metrics calculated from your saved jobs, applications, shortlists, and screening results."/><div className="rw-metrics rw-metrics-wide">{[['Total jobs',data.total_jobs],['Active jobs',data.active_jobs],['Candidates',data.total_candidates],['Screened candidates',data.screened_candidates],['Shortlisted',data.shortlisted_candidates],['Average match score',data.average_match_score==null?'—':`${data.average_match_score}%`]].map(([label,val])=><article className="rw-metric" key={String(label)}><div>{label}</div><strong>{val}</strong><small>Current workspace data</small></article>)}</div></section>}
+function ExplanationSkills({
+  title,
+  items,
+}: {
+  title: string
+  items: Array<{ name: string; resume_skill?: string | null }>
+}) {
+  return (
+    <div className="rw-explain-skills">
+      <h3>{title}</h3>
+      {items.length ? (
+        <div className="rw-chips">
+          {items.map((x, i) => (
+            <span key={`${x.name}-${i}`}>
+              {x.name}
+              {x.resume_skill && x.resume_skill !== x.name ? ` · ${x.resume_skill}` : ''}
+            </span>
+          ))}
+        </div>
+      ) : (
+        <p className="rw-muted">None identified.</p>
+      )}
+    </div>
+  )
+}
 
-export function RecruiterSettingsPage(){const{profile}=useProfile();return <section className="rw-content"><PageTitle title="Settings" description="Your recruiter profile and workspace information."/><section className="rw-panel rw-facts"><Fact label="Recruiter" value={profile?.full_name}/><Fact label="Email" value={profile?.email}/><Fact label="Company" value={profile?.company_name}/><p className="rw-muted">Profile details can be updated from your account profile.</p></section></section>}
+export function ShortlistPage() {
+  const [jobs, setJobs] = useState<JobRecord[]>([])
+  const [jobId, setJobId] = useState('')
+  const [rows, setRows] = useState<WorkspaceCandidate[]>([])
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    void getRecruiterJobs()
+      .then(j => {
+        setJobs(j)
+        if (j[0]) setJobId(j[0].id)
+      })
+      .catch(e => setError(e.message))
+  }, [])
+
+  useEffect(() => {
+    if (!jobId) return
+    setLoading(true)
+    void getShortlist(jobId)
+      .then(setRows)
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false))
+  }, [jobId])
+
+  return (
+    <section className="rw-content">
+      <PageTitle
+        eyebrow="SAVED TALENT"
+        title="Shortlist"
+        description="Candidates you have saved for closer review."
+        action={
+          <select aria-label="Select job" value={jobId} onChange={e => setJobId(e.target.value)}>
+            {jobs.map(j => (
+              <option key={j.id} value={j.id}>
+                {j.title}
+              </option>
+            ))}
+          </select>
+        }
+      />
+      {error && <ErrorBox message={error} />}
+      {loading ? (
+        <Loading />
+      ) : !rows.length ? (
+        <Empty
+          title="No candidates shortlisted yet"
+          body="Add a candidate to your shortlist from a job's candidate pipeline."
+          action={
+            <Link className="rw-button primary" to="/recruiter/jobs">
+              Browse jobs
+            </Link>
+          }
+        />
+      ) : (
+        <div className="rw-shortlist-grid">
+          {rows.map(r => (
+            <article className="rw-panel rw-shortlist-card" key={r.candidate_id}>
+              <div>
+                <div className="rw-shortlist-head">
+                  <div>
+                    <h3>{r.candidate.full_name || 'Candidate'}</h3>
+                    <p>{r.candidate.email}</p>
+                  </div>
+                  <BookmarkCheck size={20} />
+                </div>
+                <p className="rw-muted" style={{ margin: '12px 0' }}>
+                  {r.profile.summary || 'No candidate summary available.'}
+                </p>
+                <div className="rw-card-score">
+                  <span>Match score</span>
+                  <Score value={r.result?.overall_score} />
+                </div>
+                <small>
+                  Added {date(r.shortlist?.created_at)} · {jobs.find(j => j.id === jobId)?.title}
+                </small>
+              </div>
+              <div className="rw-actions">
+                <Link className="rw-button secondary" to={`/recruiter/jobs/${jobId}/candidates/${r.candidate_id}`}>
+                  View candidate
+                </Link>
+                <button
+                  className="rw-button secondary"
+                  onClick={() => navigate('/recruiter/compare', { state: { jobId, candidates: [r] } })}
+                >
+                  Compare
+                </button>
+                <button
+                  className="rw-text-button danger"
+                  onClick={() =>
+                    void updateShortlist(jobId, r.candidate_id, false)
+                      .then(() => setRows(current => current.filter(x => x.candidate_id !== r.candidate_id)))
+                      .catch(e => setError(e.message))
+                  }
+                >
+                  Remove
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
+
+export function CompareCandidatesPage() {
+  const location = useLocation()
+  const state = location.state as { jobId?: string; jobTitle?: string; candidates?: WorkspaceCandidate[] } | null
+  const [jobs, setJobs] = useState<JobRecord[]>([])
+  const [jobId, setJobId] = useState(state?.jobId || '')
+  const [ids, setIds] = useState<string[]>(state?.candidates?.map(x => x.candidate_id) || [])
+  const [candidates, setCandidates] = useState<WorkspaceCandidate[]>(state?.candidates || [])
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
+
+  useEffect(() => {
+    void getRecruiterJobs()
+      .then(js => {
+        setJobs(js)
+        if (!jobId && js[0]) setJobId(js[0].id)
+      })
+      .catch(e => setError(e.message))
+  }, [])
+
+  useEffect(() => {
+    if (!jobId) return
+    void getCandidates(jobId, { page: 1, page_size: 100, sort: 'score' })
+      .then(data => {
+        setCandidates(data.items)
+        if (!ids.length && data.items.length >= 2) setIds(data.items.slice(0, 2).map(x => x.candidate_id))
+      })
+      .catch(e => setError(e.message))
+  }, [jobId])
+
+  const selected = candidates.filter(c => ids.includes(c.candidate_id))
+
+  async function refresh() {
+    if (ids.length < 2 || ids.length > 5) return
+    setBusy(true)
+    try {
+      setCandidates(await compareCandidates(jobId, ids))
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Comparison failed.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <section className="rw-content">
+      <PageTitle
+        eyebrow="SIDE-BY-SIDE EVALUATION"
+        title="Compare candidates"
+        description="Review factual profile and saved screening data for candidates on the same job."
+      />
+      {error && <ErrorBox message={error} />}
+      <div className="rw-compare-controls">
+        <select
+          value={jobId}
+          onChange={e => {
+            setJobId(e.target.value)
+            setIds([])
+          }}
+          aria-label="Job for comparison"
+        >
+          {jobs.map(j => (
+            <option key={j.id} value={j.id}>
+              {j.title}
+            </option>
+          ))}
+        </select>
+        <select
+          multiple
+          value={ids}
+          onChange={e => setIds(Array.from(e.target.selectedOptions, o => o.value).slice(0, 5))}
+          aria-label="Select two to five candidates"
+        >
+          {candidates.map(c => (
+            <option key={c.candidate_id} value={c.candidate_id}>
+              {c.candidate.full_name || c.candidate.email || c.candidate_id}
+            </option>
+          ))}
+        </select>
+        <button className="rw-button primary" disabled={busy || ids.length < 2} onClick={() => void refresh()}>
+          {busy ? 'Loading…' : 'Compare selected'}
+        </button>
+        <small>Select 2–5 candidates associated with this job.</small>
+      </div>
+
+      {selected.length >= 2 ? (
+        <div className="rw-panel rw-table-panel">
+          <div className="rw-table-scroll">
+            <table className="rw-table rw-compare-table">
+              <thead>
+                <tr>
+                  <th>Factual Data</th>
+                  {selected.map(c => (
+                    <th key={c.candidate_id}>{c.candidate.full_name || 'Candidate'}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonRows().map(([label, get]) => (
+                  <tr key={label}>
+                    <td>
+                      <strong>{label}</strong>
+                    </td>
+                    {selected.map(c => (
+                      <td key={c.candidate_id}>{get(c)}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : (
+        <Empty title="Select candidates to compare" body="Choose two to five candidates who applied to the same job." />
+      )}
+    </section>
+  )
+}
+
+function comparisonRows(): Array<[string, (x: WorkspaceCandidate) => ReactNode]> {
+  return [
+    ['Match score', x => <Score value={x.result?.overall_score} />],
+    ['Semantic score', x => <Score value={x.result?.semantic_score} />],
+    ['Skill score', x => <Score value={x.result?.skills_score} />],
+    [
+      'Experience score',
+      x => (
+        <>
+          {x.profile.years_experience != null ? `${x.profile.years_experience} years · ` : ''}
+          <Score value={x.result?.experience_score} />
+        </>
+      ),
+    ],
+    ['Education score', x => <Score value={x.result?.education_score} />],
+    ['Project score', x => <Score value={x.result?.projects_score} />],
+    ['Years experience', x => (x.profile.years_experience == null ? '—' : `${x.profile.years_experience} years`)],
+    ['Matched skills count', x => String(Array.isArray(x.result?.matched_skills) ? x.result!.matched_skills!.length : 0)],
+    ['Missing skills count', x => String(Array.isArray(x.result?.missing_skills) ? x.result!.missing_skills!.length : 0)],
+    ['Relevant projects', x => String(Array.isArray(x.profile.projects_json) ? x.profile.projects_json.length : 0)],
+    ['Shortlist status', x => (x.shortlist ? 'Shortlisted' : 'Not shortlisted')],
+  ]
+}
+
+export function RecruiterAnalyticsPage() {
+  const [data, setData] = useState<RecruiterMetrics | null>(null)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    void getRecruiterDashboard().then(setData).catch(e => setError(e.message))
+  }, [])
+
+  if (error)
+    return (
+      <section className="rw-content">
+        <ErrorBox message={error} />
+      </section>
+    )
+  if (!data)
+    return (
+      <section className="rw-content">
+        <Loading />
+      </section>
+    )
+
+  const analyticsCards = [
+    { label: 'Total jobs', val: data.total_jobs, icon: BriefcaseBusiness },
+    { label: 'Active jobs', val: data.active_jobs, icon: CheckCircle2 },
+    { label: 'Candidates', val: data.total_candidates, icon: Users },
+    { label: 'Screened candidates', val: data.screened_candidates, icon: Sparkles },
+    { label: 'Shortlisted', val: data.shortlisted_candidates, icon: BookmarkCheck },
+    {
+      label: 'Average match score',
+      val: data.average_match_score == null ? '—' : `${data.average_match_score}%`,
+      icon: Award,
+    },
+  ]
+
+  return (
+    <section className="rw-content">
+      <PageTitle
+        eyebrow="PERFORMANCE OVERVIEW"
+        title="Analytics"
+        description="Summary metrics calculated from your saved jobs, applications, shortlists, and screening results."
+      />
+      <div className="rw-metrics rw-metrics-wide">
+        {analyticsCards.map(item => {
+          const Icon = item.icon
+          return (
+            <article className="rw-metric" key={item.label}>
+              <div className="rw-metric-top">
+                <span className="rw-metric-label">{item.label}</span>
+                <div className="rw-metric-icon">
+                  <Icon size={18} />
+                </div>
+              </div>
+              <strong>{item.val}</strong>
+              <small>Current workspace data</small>
+            </article>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+
+export function RecruiterSettingsPage() {
+  const { profile } = useProfile()
+  return (
+    <section className="rw-content">
+      <PageTitle
+        eyebrow="PREFERENCES"
+        title="Settings"
+        description="Your recruiter profile and workspace information."
+      />
+      <section className="rw-panel rw-facts">
+        <h2 style={{ marginBottom: '16px' }}>Recruiter profile</h2>
+        <Fact label="Recruiter" value={profile?.full_name} />
+        <Fact label="Email" value={profile?.email} />
+        <Fact label="Company" value={profile?.company_name} />
+        <p className="rw-muted" style={{ marginTop: '16px' }}>
+          Profile details can be updated from your account profile settings.
+        </p>
+      </section>
+    </section>
+  )
+}
