@@ -28,5 +28,18 @@ If you are developing a production application, we recommend enabling type-aware
   }
 }
 ```
+## Getting Started
 
+### Prerequisites
+- Node.js (version 20 or later)
+- npm
+
+### Installation
+
+1. Clone the repository.
+2. Navigate to the frontend folder.
+3. Install dependencies:
+
+   ```bash
+   npm install
 See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
